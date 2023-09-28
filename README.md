@@ -4,3 +4,5 @@ Second version of my [SelenicSparkApp project](https://github.com/HardcoreMagazi
 This repository is a first part (back-end) of the project, more will come later.
 
 ## WORK IN PROGRESS
+
+[Apache 2.0 License](LICENSE.txt)
