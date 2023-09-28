@@ -1,0 +1,6 @@
+@SelenicSparkApp_v2_WebAPI_HostAddress = http://localhost:5047
+
+GET {{SelenicSparkApp_v2_WebAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
