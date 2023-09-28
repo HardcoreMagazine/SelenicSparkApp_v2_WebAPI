@@ -29,6 +29,8 @@ namespace SelenicSparkApp_v2_WebAPI.Controllers
             {
                 return new Post
                 {
+                    // TODO: fix this mess
+                    // Exception thrown: 'System.InvalidCastException' in System.Private.CoreLib.dll
                     PostID = (int)reader.GetValue(0),
                     Title = (string)reader.GetValue(1),
                     Text = (string)reader.GetValue(2),

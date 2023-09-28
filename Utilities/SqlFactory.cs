@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MySqlConnector;
+using System.Data.Common;
 
 namespace SelenicSparkApp_v2_WebAPI.Utilities
 {
@@ -54,9 +55,14 @@ namespace SelenicSparkApp_v2_WebAPI.Utilities
 
                 return results;
             }
-            catch
+            catch (DbException exc)
             {
-                Logger.LogInformation("");
+                Logger.LogError($"Database error has occured: '{exc.Message}'");
+                return null;
+            }
+            catch (Exception exc)
+            {
+                Logger.LogWarning($"Unknown error has occured: '{exc.Message}'");
                 return null;
             }
             finally
@@ -65,7 +71,7 @@ namespace SelenicSparkApp_v2_WebAPI.Utilities
             }
         }
 
-        public async Task<bool> Update(string query)
+        public async Task<bool> Update(string query) // TODO
         {
             if (!query.Contains("UPDATE"))
             {
@@ -86,7 +92,7 @@ namespace SelenicSparkApp_v2_WebAPI.Utilities
             }
         }
 
-        public async Task<bool> Delete(string query)
+        public async Task<bool> Delete(string query) // TODO
         {
             if (!query.Contains("DELETE")) // Dummy failsafe
             {
@@ -95,7 +101,6 @@ namespace SelenicSparkApp_v2_WebAPI.Utilities
             try
             {
                 await Connection.OpenAsync();
-                // TODO
                 return true;
             }
             catch
