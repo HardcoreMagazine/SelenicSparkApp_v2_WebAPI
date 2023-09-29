@@ -19,6 +19,9 @@ namespace SelenicSparkApp_v2_WebAPI.Utilities
             Logger = logger;
         }
 
+        /// <summary>Executes INSERT operation in database with given query</summary>
+        /// <param name="query">SQL 'INSERT' query</param>
+        /// <returns>true - if operation was successful, otherwise - false</returns>
         public async Task<bool> Insert(string query)
         {
             if (string.IsNullOrWhiteSpace(query) || !query.Contains("INSERT")) // Dummy failsafe
@@ -56,7 +59,7 @@ namespace SelenicSparkApp_v2_WebAPI.Utilities
             }
         }
 
-        /// <summary>Selects the specified query.</summary>
+        /// <summary>Executes select operation with given query</summary>
         /// <typeparam name="T">Model</typeparam>
         /// <param name="query">SQL 'SELECT' query string</param>
         /// <param name="mapFunction">Mapping function for Model</param>
@@ -73,7 +76,7 @@ namespace SelenicSparkApp_v2_WebAPI.Utilities
         /// </example>
         public async Task<List<T>?> Select<T>(string query, Func<MySqlDataReader, T> mapFunction)
         {
-            if (string.IsNullOrWhiteSpace(query) || !query.Contains("SELECT")) // Dummy failsafe
+            if (string.IsNullOrWhiteSpace(query) || !query.Contains("SELECT"))
             {
                 return null;
             }
@@ -109,7 +112,10 @@ namespace SelenicSparkApp_v2_WebAPI.Utilities
             }
         }
 
-        public async Task<bool> Update(string query) // TODO
+        /// <summary>Executes UPDATE operation in database with given query</summary>
+        /// <param name="query">SQL 'UPDATE' query</param>
+        /// <returns>true - if operation was successful, otherwise - false</returns>
+        public async Task<bool> Update(string query)
         {
             if (string.IsNullOrWhiteSpace(query) || !query.Contains("UPDATE"))
             {
@@ -118,10 +124,26 @@ namespace SelenicSparkApp_v2_WebAPI.Utilities
             try
             {
                 await Connection.OpenAsync();
-                return true;
+                var command = new MySqlCommand(query, Connection);
+                var reader = await command.ExecuteReaderAsync();
+                if (reader.RecordsAffected > 0)
+                {
+                    Logger.LogInformation($"Updated database entry, q='{query}'");
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
-            catch
+            catch (DbException exc)
             {
+                Logger.LogError($"Database error has occured: '{exc.Message}'");
+                return false;
+            }
+            catch (Exception exc)
+            {
+                Logger.LogWarning($"Unknown error has occured: '{exc.Message}'");
                 return false;
             }
             finally
@@ -130,19 +152,38 @@ namespace SelenicSparkApp_v2_WebAPI.Utilities
             }
         }
 
-        public async Task<bool> Delete(string query) // TODO
+        /// <summary>Executes DELETE operation in database with given query</summary>
+        /// <param name="query">SQL 'DELETE' query</param>
+        /// <returns>true - if operation was successful, otherwise - false</returns>
+        public async Task<bool> Delete(string query)
         {
-            if (string.IsNullOrWhiteSpace(query) || !query.Contains("DELETE")) // Dummy failsafe
+            if (string.IsNullOrWhiteSpace(query) || !query.Contains("DELETE"))
             {
                 return false;
             }
             try
             {
                 await Connection.OpenAsync();
-                return true;
+                var command = new MySqlCommand(query, Connection);
+                var reader = await command.ExecuteReaderAsync();
+                if (reader.RecordsAffected > 0)
+                {
+                    Logger.LogInformation($"Deleted database entry, q='{query}'");
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
-            catch
+            catch (DbException exc)
             {
+                Logger.LogError($"Database error has occured: '{exc.Message}'");
+                return false;
+            }
+            catch (Exception exc)
+            {
+                Logger.LogWarning($"Unknown error has occured: '{exc.Message}'");
                 return false;
             }
             finally
