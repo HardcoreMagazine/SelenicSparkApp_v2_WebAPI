@@ -6,5 +6,9 @@ This repository is a first part (back-end) of the project, more will come later.
 ## WORK IN PROGRESS
 
 
+## See also:
+[Frontend/Angular application](https://github.com/HardcoreMagazine/SelenicSparkApp_v2_Angular)  
+
+
 ## License
 **[Apache 2.0 License](LICENSE.txt)**
